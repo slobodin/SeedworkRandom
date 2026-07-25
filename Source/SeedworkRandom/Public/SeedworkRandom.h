@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright (c) Mistfly Games. All Rights Reserved.
 
 #pragma once
 
@@ -7,8 +7,6 @@
 class FSeedworkRandomModule : public IModuleInterface
 {
 public:
-
-	/** IModuleInterface implementation */
-	virtual void StartupModule() override;
-	virtual void ShutdownModule() override;
+    virtual void StartupModule() override;
+    virtual void ShutdownModule() override;
 };
