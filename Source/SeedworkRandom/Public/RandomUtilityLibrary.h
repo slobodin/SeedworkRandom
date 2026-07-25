@@ -24,7 +24,7 @@ public:
         checkf(false, TEXT("check it works correctly first"));
         if (arr.Num() > 0)
         {
-            int32 idx = ShareIntegerInRange(0, arr.Num() - 1);
+            int32 idx = SharedIntegerInRange(0, arr.Num() - 1);
             return arr[idx];
         }
 

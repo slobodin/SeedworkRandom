@@ -16,6 +16,12 @@ void URandomUtilityLibrary::NormalizeProbabilities(TArray<double>& probabilities
 {
     checkf(false, TEXT("check it works correctly first"));
     double totalProb = Algo::Accumulate(probabilities, 0.0);
+
+    if (totalProb <= 0.0)
+    {
+        return;
+    }
+
     Algo::ForEach(probabilities, [totalProb](double& p) { p /= totalProb; });
 }
 
