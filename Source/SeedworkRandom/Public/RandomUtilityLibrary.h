@@ -13,9 +13,6 @@ class SEEDWORKRANDOM_API URandomUtilityLibrary : public UBlueprintFunctionLibrar
     GENERATED_BODY()
 
 public:
-    UFUNCTION(BlueprintPure)
-    static URandom* GetSharedRandom();
-
     static void NormalizeProbabilities(TArray<double>& probabilities);
 
     template<typename T>

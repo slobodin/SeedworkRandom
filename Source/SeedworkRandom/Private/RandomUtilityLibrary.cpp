@@ -5,13 +5,6 @@
 #include "Algo/ForEach.h"
 #include "SeedworkRandom.h"
 
-URandom* URandomUtilityLibrary::GetSharedRandom()
-{
-    auto result = URandom::Shared();
-    check(IsValid(result));
-    return result;
-}
-
 void URandomUtilityLibrary::NormalizeProbabilities(TArray<double>& probabilities)
 {
     checkf(false, TEXT("check it works correctly first"));
@@ -27,10 +20,10 @@ void URandomUtilityLibrary::NormalizeProbabilities(TArray<double>& probabilities
 
 int32 URandomUtilityLibrary::SharedIntegerInRange(int32 a, int32 b)
 {
-    return GetSharedRandom()->IntegerInRange(a, b);
+    return URandom::Shared()->IntegerInRange(a, b);
 }
 
 double URandomUtilityLibrary::SharedDouble()
 {
-    return GetSharedRandom()->Double();
+    return URandom::Shared()->Double();
 }

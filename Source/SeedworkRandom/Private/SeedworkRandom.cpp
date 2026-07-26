@@ -3,10 +3,10 @@
 #include "SeedworkRandom.h"
 #include <chrono>
 
-void URandom::Reset()
+void URandom::SetSeed(int32 newSeed)
 {
+    Seed = newSeed;
     bInited = false;
-    MT = std::mt19937{}; // Reset to default state
 }
 
 int32 URandom::IntegerInRange(int32 a, int32 b)
@@ -20,7 +20,7 @@ int32 URandom::IntegerInRange(int32 a, int32 b)
 
     std::uniform_int_distribution<int32> distr{ a, b };
 
-    return distr(*GetRandomGenerator());
+    return distr(GetRandomGenerator());
 }
 
 int32 URandom::IntegerInRange(const FInt32Interval& range)
@@ -39,7 +39,7 @@ double URandom::DoubleInRange(double a, double b)
 
     std::uniform_real_distribution<double> distr{ a, b };
 
-    return distr(*GetRandomGenerator());
+    return distr(GetRandomGenerator());
 }
 
 double URandom::DoubleInRange(const FVector2D& range)
@@ -56,14 +56,14 @@ double URandom::NormalDistribution(double mean, double stddev)
 {
     std::normal_distribution<double> distr{ mean, stddev };
 
-    return distr(*GetRandomGenerator());
+    return distr(GetRandomGenerator());
 }
 
 double URandom::ExponentialDistribution(double lambda)
 {
     std::exponential_distribution<double> distr{ lambda };
 
-    return distr(*GetRandomGenerator());
+    return distr(GetRandomGenerator());
 }
 
 bool URandom::BoolWithWeight(double weight)
@@ -172,6 +172,14 @@ FVector URandom::PointInBox(const FVector& center, const FVector& halfSize)
     return PointInBox(FBox(BoxMin, BoxMax));
 }
 
+int32 URandom::GenerateAutoSeed()
+{
+    std::random_device rd;
+    const uint32 autoSeed =
+        rd() ^ static_cast<uint32>(std::chrono::steady_clock::now().time_since_epoch().count());
+    return static_cast<int32>(autoSeed);
+}
+
 URandom* URandom::Shared()
 {
     static FName Name = "SeedworkRandom";
@@ -182,34 +190,30 @@ URandom* URandom::Shared()
     return randomModule.SharedRandom.Get();
 }
 
-std::mt19937* URandom::GetRandomGenerator()
+std::mt19937& URandom::GetRandomGenerator()
 {
-    if (!bInited)
+    if (LIKELY(bInited))
     {
-        std::random_device rd;
-
-        // Create seed_seq with high-res clock and 7 random numbers from std::random_device
-        std::seed_seq ss{
-            static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()),
-            rd(), rd(), rd(), rd(), rd(), rd(), rd() };
-
-        MT = std::mt19937{ ss };
-
-        // warm up generator
-        for (int32 i = 0; i < 128; i++)
-        {
-            static_cast<void>(MT());
-        }
-
-        bInited = true;
+        return MT;
     }
 
-    return &MT;
+    std::seed_seq ss{ static_cast<uint32>(Seed) };
+    MT = std::mt19937{ ss };
+
+    // Warm up the generator to move past mt19937's weak initial state.
+    for (int32 i = 0; i < 128; i++)
+    {
+        static_cast<void>(MT());
+    }
+
+    bInited = true;
+    return MT;
 }
 
 void FSeedworkRandomModule::StartupModule()
 {
     SharedRandom = TStrongObjectPtr(NewObject<URandom>());
+    SharedRandom->SetSeed(URandom::GenerateAutoSeed());
 }
 
 void FSeedworkRandomModule::ShutdownModule()
