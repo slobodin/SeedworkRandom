@@ -91,6 +91,4 @@ public:
 
 private:
     TStrongObjectPtr<URandom> SharedRandom;
-
-    friend class URandom;
 };

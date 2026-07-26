@@ -3,6 +3,12 @@
 #include "SeedworkRandom.h"
 #include <chrono>
 
+namespace
+{
+    // Set once in StartupModule, cleared in ShutdownModule.
+    URandom* GSharedRandom = nullptr;
+}
+
 void URandom::SetSeed(int32 newSeed)
 {
     Seed = newSeed;
@@ -182,12 +188,8 @@ int32 URandom::GenerateAutoSeed()
 
 URandom* URandom::Shared()
 {
-    static FName Name = "SeedworkRandom";
-    FSeedworkRandomModule& randomModule = FModuleManager::GetModuleChecked<FSeedworkRandomModule>(Name);
-
-    check(randomModule.SharedRandom.IsValid());
-
-    return randomModule.SharedRandom.Get();
+    checkSlow(GSharedRandom);
+    return GSharedRandom;
 }
 
 std::mt19937& URandom::GetRandomGenerator()
@@ -214,10 +216,12 @@ void FSeedworkRandomModule::StartupModule()
 {
     SharedRandom = TStrongObjectPtr(NewObject<URandom>());
     SharedRandom->SetSeed(URandom::GenerateAutoSeed());
+    GSharedRandom = SharedRandom.Get();
 }
 
 void FSeedworkRandomModule::ShutdownModule()
 {
+    GSharedRandom = nullptr;
     SharedRandom.Reset();
 }
 
