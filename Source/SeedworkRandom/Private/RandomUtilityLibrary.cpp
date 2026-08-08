@@ -20,10 +20,10 @@ void URandomUtilityLibrary::NormalizeProbabilities(TArray<double>& probabilities
 
 int32 URandomUtilityLibrary::SharedIntegerInRange(int32 a, int32 b)
 {
-    return URandom::Shared()->IntegerInRange(a, b);
+    return URandom::Shared().IntegerInRange(a, b);
 }
 
 double URandomUtilityLibrary::SharedDouble()
 {
-    return URandom::Shared()->Double();
+    return URandom::Shared().Double();
 }

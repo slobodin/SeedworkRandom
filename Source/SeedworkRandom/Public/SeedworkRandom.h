@@ -69,7 +69,9 @@ public:
 
     /** NOTE: This is not thread safe! */
     UFUNCTION(BlueprintPure, meta = (DisplayName = "GetSharedRandom", ScriptName = "GetSharedRandom"))
-    static URandom* Shared();
+    static URandom* K2_Shared();
+
+    static URandom& Shared();
 
 private:
     std::mt19937 MT;

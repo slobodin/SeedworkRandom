@@ -186,10 +186,16 @@ int32 URandom::GenerateAutoSeed()
     return static_cast<int32>(autoSeed);
 }
 
-URandom* URandom::Shared()
+URandom* URandom::K2_Shared()
 {
     checkSlow(GSharedRandom);
     return GSharedRandom;
+}
+
+URandom& URandom::Shared()
+{
+    checkSlow(GSharedRandom);
+    return *GSharedRandom;
 }
 
 std::mt19937& URandom::GetRandomGenerator()
