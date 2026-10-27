@@ -1,9 +1,9 @@
 // Copyright (c) Mistfly Games. All Rights Reserved.
 
-#include "PCG32.h"
+#include "Pcg32Engine.h"
 #include <bit>
 
-uint32 FPCG32::Next()  // pcg_setseq_64_xsh_rr_32_random_r
+uint32 FPcg32Engine::Next()  // pcg_setseq_64_xsh_rr_32_random_r
 {
     constexpr uint64 Multiplier = 6364136223846793005ULL;   // PCG_DEFAULT_MULTIPLIER_64
 

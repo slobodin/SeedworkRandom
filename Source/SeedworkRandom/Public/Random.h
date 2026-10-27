@@ -4,11 +4,11 @@
 
 #include "UObject/Object.h"
 #include "Math/Interval.h"
-#include "PCG32.h"
+#include "Pcg32Engine.h"
 #include "Random.generated.h"
 
 /**
- * Wrapper over PCG-XSH-RR 64/32 random generator. See PCG32.h
+ * Wrapper over PCG-XSH-RR 64/32 random generator. See Pcg32Engine.h
  */
 UCLASS(BlueprintType)
 class SEEDWORKRANDOM_API URandom : public UObject
@@ -79,32 +79,51 @@ public:
         return {};
     }
 
+    /**
+     * Picks an element with a chance proportional to its probability. The probabilities don't need to sum to 1.
+     * Elements with a probability of 0 or less are never picked. If no probability is positive, returns a default value,
+     * the same as ArrayElement for an empty array.
+     */
     template<typename T>
-    T ArrayElementWithProbability(const TArray<T>& targetArray, TArray<double> probabilities)
+    T ArrayElementWithProbability(const TArray<T>& targetArray, const TArray<double>& probabilities)
     {
-        if (targetArray.Num() == probabilities.Num())
+        if (!ensure(targetArray.Num() == probabilities.Num()))
         {
-            NormalizeProbabilities(probabilities);
+            return {};
+        }
 
-            // now pick an item
-            double x = Double();
-            double cumulativeProb = 0.0;
-
-            for (int32 i = 0; i < targetArray.Num(); i++)
+        double total = 0.0;
+        for (double probability : probabilities)
+        {
+            if (probability > 0.0)
             {
-                cumulativeProb += probabilities[i];
+                total += probability;
+            }
+        }
 
-                if (x <= cumulativeProb)
+        if (total <= 0.0)
+        {
+            return {};
+        }
+
+        // Rounding can leave the remainder slightly above 0 after the last subtraction,
+        // so the last element with a positive probability is the fallback.
+        double remainder = Double() * total;
+        int32 pickedIndex = INDEX_NONE;
+        for (int32 i = 0; i < probabilities.Num(); i++)
+        {
+            if (probabilities[i] > 0.0)
+            {
+                pickedIndex = i;
+                remainder -= probabilities[i];
+                if (remainder < 0.0)
                 {
-                    return targetArray[i];
+                    break;
                 }
             }
         }
 
-        // should not be here.
-        checkNoEntry();
-
-        return ArrayElement(targetArray);
+        return targetArray[pickedIndex];
     }
 
     template<typename T>
@@ -125,14 +144,14 @@ public:
 
     static URandom& Shared();
 
-    static URandom* MakePCG32(int32 seed, int32 stream = 0)
+    static URandom* Make(int32 seed, int32 stream = 0)
     {
         URandom* random = NewObject<URandom>();
-        random->Rng = FPCG32(seed, stream);
+        random->Rng = FPcg32Engine(seed, stream);
         return random;
     }
 
 private:
     UPROPERTY(SaveGame)
-    FPCG32 Rng;
+    FPcg32Engine Rng;
 };

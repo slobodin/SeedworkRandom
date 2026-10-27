@@ -31,7 +31,7 @@ void FSeedworkRandomModule::StartupModule()
         return static_cast<int32>(timeSeed ^ guidHash);
     };
 
-    auto rng = URandom::MakePCG32(GenerateAutoSeed());
+    auto rng = URandom::Make(GenerateAutoSeed());
     SharedRandom = TStrongObjectPtr(rng);
     GSharedRandom = SharedRandom.Get();
 }

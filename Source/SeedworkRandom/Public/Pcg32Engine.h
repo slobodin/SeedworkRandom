@@ -2,23 +2,23 @@
 
 #pragma once
 
-#include "PCG32.generated.h"
+#include "Pcg32Engine.generated.h"
 
 /**
  * PCG32 (XSH RR 64/32), see https://www.pcg-random.org.
  */
 USTRUCT()
-struct SEEDWORKRANDOM_API FPCG32
+struct SEEDWORKRANDOM_API FPcg32Engine
 {
     GENERATED_BODY()
 
 public:
-    FPCG32()
+    FPcg32Engine()
     {
         SetSeed(0, 0);
     }
 
-    explicit FPCG32(int32 seed, int32 stream = 0)
+    explicit FPcg32Engine(int32 seed, int32 stream = 0)
     {
         SetSeed(seed, stream);
     }
