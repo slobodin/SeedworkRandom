@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Modules/ModuleInterface.h"
+#include "UObject/StrongObjectPtrTemplates.h"
 
 class URandom;
 

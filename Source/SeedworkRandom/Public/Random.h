@@ -67,8 +67,6 @@ public:
 
     FVector PointInBox(const FVector& center, const FVector& halfSize);
 
-    void NormalizeProbabilities(TArray<double>& probabilities);
-
     template<typename T>
     T ArrayElement(const TArray<T>& arr)
     {
@@ -118,6 +116,8 @@ public:
             input.Swap(replaceIdx, idx);
         }
     }
+
+    static void NormalizeProbabilities(TArray<double>& probabilities);
 
     /** NOTE: This is not thread safe! */
     UFUNCTION(BlueprintPure, meta = (DisplayName = "GetSharedRandom", ScriptName = "GetSharedRandom"))
