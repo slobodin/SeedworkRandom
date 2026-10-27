@@ -128,7 +128,7 @@ public:
     static URandom* MakePCG32(int32 seed, int32 stream = 0)
     {
         URandom* random = NewObject<URandom>();
-        random->Rng.SetSeed(seed, stream);
+        random->Rng = FPCG32(seed, stream);
         return random;
     }
 
