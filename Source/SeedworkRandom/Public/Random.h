@@ -143,9 +143,9 @@ public:
 
     static URandom& Shared();
 
-    static URandom* Make(int32 seed, int32 stream = 0)
+    static URandom* Make(uint64 seed, uint64 stream = 0)
     {
-        URandom* random = NewObject<URandom>();
+        auto random = NewObject<URandom>();
         random->Rng = FPcg32Engine(seed, stream);
         return random;
     }
