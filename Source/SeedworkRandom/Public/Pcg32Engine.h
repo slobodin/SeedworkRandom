@@ -18,18 +18,18 @@ public:
         SetSeed(0, 0);
     }
 
-    explicit FPcg32Engine(int32 seed, int32 stream = 0)
+    explicit FPcg32Engine(uint64 seed, uint64 stream = 0)
     {
         SetSeed(seed, stream);
     }
 
-    int32 GetSeed() const { return Seed; }
+    uint64 GetSeed() const { return Seed; }
 
     uint32 Next();
 
 private:
     UPROPERTY(SaveGame)
-    int32 Seed = 0;
+    uint64 Seed = 0;
 
     UPROPERTY(SaveGame)
     uint64 State = 0;

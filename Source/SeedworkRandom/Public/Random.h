@@ -16,8 +16,7 @@ class SEEDWORKRANDOM_API URandom : public UObject
     GENERATED_BODY()
 
 public:
-    UFUNCTION(BlueprintCallable)
-    int32 GetSeed() const { return Rng.GetSeed(); }
+    uint64 GetSeed() const { return Rng.GetSeed(); }
 
     /** Random int in a closed interval [a..b] (uniform) */
     UFUNCTION(BlueprintCallable)
